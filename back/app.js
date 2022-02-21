@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 
-mongoose.connect('mongodb+srv://MC:Projet6@projetoc.2amyr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-  { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://Hakmiller_:Diesel1978@cluster0.znpcm.mongodb.net/test?retryWrites=true&w=majority',
+  { useNewUrlParser: true,
+    useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
-
 app.use(express.json());
 
 app.use((req, res, next) => {
