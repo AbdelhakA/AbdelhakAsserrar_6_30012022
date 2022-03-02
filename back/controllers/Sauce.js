@@ -1,4 +1,7 @@
-const Sauce = require('..models/Sauce');
+const Sauce = require('../models/Sauce');
+const fs = require('fs');
+
+// --------CREER/POSTER UNE SAUCE (Méthode POST)---------
 
 exports.createSauce = (req, res, next) => { // Methode POST
   const sauceObject = JSON.parse(req.body.sauce);  
@@ -10,43 +13,49 @@ exports.createSauce = (req, res, next) => { // Methode POST
      sauce.save()
      .then(() => res.status(201).json({ message: "objet enregistré !"}))
      .catch(error => res.status(400).json({ error }));
-    };
-
-    exports.deleteSauce = (req, res, next) => {
-      Sauce.findOne({ _id: req.params.id}).then(
-        (sauce) => {
-          if(!sauce) { // Si l'objet n'existe pas
-            req.status(404).json({
-              error: new Error('Objet non trouvé !')
-            });
-          }
-          if (sauce.userId !== req.auth.userId) {
-            return res.status(401).json ({
-              error: new Error('Requête non autorisée !')
-            });
-          }
-          Sauce.deleteOne({ _id: req.params.id }) // verif si l'_id de la base de données = celui des paaramètres de la request
-      .then(() => res.status(200).json({ message: "objet supprimé !" }))
-      .catch(error => res.status(400).json({ error }));
-        }
-      )
-      
-    };
-
-exports.modifySauce = (req, res, next) => { // Methode PUT
-    Sauce.updateOne({ _id: req.params.id }, {...req.body, _id: req.params.id })
-    .then(() => res.status(200).json({ message: "objet modifié !" }))
-    .catch(error => res.status(400).json({ error }));
   };
+
+// --------SUPPRIMER UNE SAUCE (Méthode DELETE)---------
+
+exports.deleteSauce = (req, res, next) => {
+      Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+          const filename = sauce.imageUrl.split('/images/')[1];
+          fs.unlink(`ìmages/${filename}`, () => {
+            Sauce.deleteOne({ _id: req.params.id })
+            .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
+            .catch(error => res.status(400).json({ error }));
+          });
+        })
+        .catch(error => res.status(500).json({ error }));
+  };  
+    
+// --------MODIFIER UNE SAUCE (Méthode PUT)---------    
+
+exports.modifySauce = (req, res, next) => {
+  const sauceObject = req.file ?
+    {...JSON.parse(req.body.sauce),
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`} : { ...req.body };
+
+  Sauce.updateOne({_id: req.params.id}, { ...sauceObject, _id: req.params.id })
+    .then(() => res.status(201).json({message: 'Sauce modifiée !'}))
+    .catch(error => res.status(400).json({ error }));
+
+};
+
+
+// --------TROUVER UNE SAUCE (Méthode GET)---------
 
 exports.getOneSauce = (req, res, next) => { // Methode GET
     Sauce.findOne({ _id: req.params.id })
-      .then(thing => res.status(200).json(sauce))
+      .then(sauce => res.status(200).json(sauce))
       .catch(error => res.status(404).json({ error }));
   };
+
+// --------TROUVER TOUTES LES SAUCES (Méthode GET)---------  
   
 exports.getAllSauces = (req, res, next) => { // Methode GET
     Sauce.find()
-    .then(things => res.status(200).json(sauces))
+    .then(sauces => res.status(200).json(sauces))
     .catch(error =>res.status(400).json({ error }));    
   }; 
