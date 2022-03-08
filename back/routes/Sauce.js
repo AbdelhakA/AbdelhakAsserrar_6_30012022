@@ -16,13 +16,17 @@ router.delete('/:id', auth, sauceCtrl.deleteSauce);
   
 router.put('/:id', auth, multer, sauceCtrl.modifySauce);
   
-   //--------------// requet GET pour UN SEUL THING de la database---------------
+   //--------------// requet GET pour UNE SEULE SAUCE de la database---------------
   
 router.get('/:id', auth, sauceCtrl.getOneSauce);
   
-    //------------- requet GET pour toutes les Things de la database ------------
+    //------------- requet GET pour TOUTES LES SAUCES de la database ------------
     
 router.get('/', auth, sauceCtrl.getAllSauces);
+
+
+
+router.post('/:id/like', auth, sauceCtrl.likes);
 
     
 module.exports = router;
