@@ -1,5 +1,5 @@
 const Sauce = require('../models/Sauce');
-const fs = require('fs');
+
 
 // --------CREER/POSTER UNE SAUCE (Méthode POST)---------
 
@@ -48,8 +48,8 @@ exports.modifySauce = (req, res, next) => {
 
 exports.getOneSauce = (req, res, next) => { // Methode GET
     Sauce.findOne({ _id: req.params.id })
-      .then(sauce => res.status(200).json(sauce))
-      .catch(error => res.status(404).json({ error }));
+      .then(sauce => {res.status(200).json(sauce)})
+      .catch(error => {res.status(404).json({ error })});
   };
 
 // --------TROUVER TOUTES LES SAUCES (Méthode GET)---------  
